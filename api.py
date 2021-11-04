@@ -38,6 +38,16 @@ def register():
         return jsonify({'status': 'fail'})
     return jsonify({'status': 'success'})
 
+@api.get('/getuserbyid')
+def get_user_by_id():
+    try:
+        result = User.get_by_id(request.args.get('id'))
+        return model_to_dict(result)
+    except Exception as e:
+        print('error:', end=' ')
+        print(e)
+        return jsonify({'status': 'fail'})
+
 
 @api.post('/creategroup')
 def create_group():
