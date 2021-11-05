@@ -2,6 +2,7 @@ from datetime import date
 
 from flask import Flask
 from flask.json import JSONEncoder
+from flask_cors import CORS
 
 from routes import api
 
@@ -20,6 +21,7 @@ class CustomJSONEncoder(JSONEncoder):
 
 
 app = Flask(__name__)
+CORS(app)
 app.json_encoder = CustomJSONEncoder
 app.register_blueprint(api)
 
