@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import request, jsonify
 from playhouse.shortcuts import model_to_dict
 
-from model import Post
+from model import Post, PostLike
 from routes import api
 
 
@@ -34,6 +34,7 @@ def get_all_post():
             data = model_to_dict(i)
             data['owner_id'] = data['owner_id']['id']
             data['group_id'] = data['group_id']['id']
+            data['isLiked'] = is_like(data['id'], request.args.get('userId'))
             response.append(data)
         return jsonify(response)
     except Exception as e:
@@ -49,27 +50,31 @@ def get_post_by_id():
         data = model_to_dict(result)
         data['owner_id'] = data['owner_id']['id']
         data['group_id'] = data['group_id']['id']
+        data['isLiked'] = is_like(data['id'], request.args.get('userId'))
         return jsonify(data)
     except Exception as e:
         print('error:', end=' ')
         print(e)
         return jsonify({'status': 'fail'})
 
+
 @api.get('/getpostbygroup')
 def get_post_by_group():
     try:
-        result = Post.select().where(Post.group_id==request.args.get('groupId'))
+        result = Post.select().where(Post.group_id == request.args.get('groupId'))
         response = []
         for i in result:
             data = model_to_dict(i)
             data['owner_id'] = data['owner_id']['id']
             data['group_id'] = data['group_id']['id']
+            data['isLiked'] = is_like(data['id'], request.args.get('userId'))
             response.append(data)
         return jsonify(response)
     except Exception as e:
         print('error:', end=' ')
         print(e)
         return jsonify({'status': 'fail'})
+
 
 @api.delete('/deletepostbyid')
 def delete_post():
@@ -82,6 +87,7 @@ def delete_post():
         print(e)
         return jsonify({'status': 'fail'})
     return jsonify({'status': 'success'})
+
 
 @api.post('/editpost')
 def edit_post():
@@ -99,3 +105,44 @@ def edit_post():
         print(e)
         return jsonify({'status': 'fail'})
     return jsonify({'status': 'success'})
+
+
+@api.post('/like')
+def like_post():
+    try:
+        rq = request.get_json()
+        postlike = PostLike()
+        postlike.post = rq['postId']
+        postlike.user = rq['userId']
+        postlike.save()
+    except Exception as e:
+        print('error:', end=' ')
+        print(e)
+        return jsonify({'status': 'fail'})
+    return jsonify({'status': 'success'})
+
+
+@api.post('/unlike')
+def unlike_post():
+    try:
+        rq = request.get_json()
+        result = PostLike.delete().where(PostLike.post == rq['postId'], PostLike.user == rq['userId'])
+        result.execute()
+        print(result)
+        if result == 0:
+            return jsonify({'status': 'fail'})
+    except Exception as e:
+        print('error:', end=' ')
+        print(e)
+        return jsonify({'status': 'fail'})
+    return jsonify({'status': 'success'})
+
+
+def is_like(post, user):
+    try:
+        result = PostLike.get_or_none(PostLike.post == post, PostLike.user == user)
+        return result is not None
+    except Exception as e:
+        print('error:', end=' ')
+        print(e)
+        return None
