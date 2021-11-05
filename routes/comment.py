@@ -54,3 +54,27 @@ def get_comment_by_id():
         print('error:', end=' ')
         print(e)
         return jsonify({'status': 'fail'})
+
+@api.delete('/deletecommentbyid')
+def delete_comment():
+    try:
+        result = Comment.delete_by_id(request.args.get('id'))
+        if result == 0:
+            return jsonify({'status': 'fail'})
+    except Exception as e:
+        print('error:', end=' ')
+        print(e)
+        return jsonify({'status': 'fail'})
+    return jsonify({'status': 'success'})
+
+@api.post('/editcomment')
+def edit_comment():
+    try:
+        rq = request.get_json()
+        rq['updated_at'] = datetime.now()
+        result = Comment.update(rq).execute()
+    except Exception as e:
+        print('error:', end=' ')
+        print(e)
+        return jsonify({'status': 'fail'})
+    return jsonify({'status': 'success'})
