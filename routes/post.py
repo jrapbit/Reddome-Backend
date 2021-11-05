@@ -70,3 +70,32 @@ def get_post_by_group():
         print('error:', end=' ')
         print(e)
         return jsonify({'status': 'fail'})
+
+@api.delete('/deletepostbyid')
+def delete_post():
+    try:
+        result = Post.delete_by_id(request.args.get('id'))
+        if result == 0:
+            return jsonify({'status': 'fail'})
+    except Exception as e:
+        print('error:', end=' ')
+        print(e)
+        return jsonify({'status': 'fail'})
+    return jsonify({'status': 'success'})
+
+@api.post('/editpost')
+def edit_post():
+    try:
+        rq = request.get_json()
+        post = Post()
+        post.id = rq['id']
+        post.owner_id = rq['owner_id']
+        post.content = rq['content']
+        post.group_id = rq['group_id']
+        post.updated_at = datetime.now()
+        post.save()
+    except Exception as e:
+        print('error:', end=' ')
+        print(e)
+        return jsonify({'status': 'fail'})
+    return jsonify({'status': 'success'})
