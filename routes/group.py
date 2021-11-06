@@ -18,11 +18,11 @@ def create_group():
             detail=rq['detail'],
             created_at=datetime.now()
         )
+        return jsonify({'status': 'success', 'id': model_to_dict(result)['id']})
     except Exception as e:
         print('error:', end=' ')
         print(e)
         return jsonify({'status': 'fail'})
-    return jsonify({'status': 'success'})
 
 
 @api.get('/getgroupbyid')
@@ -53,6 +53,7 @@ def get_all_group():
         print(e)
         return jsonify({'status': 'fail'})
 
+
 @api.post('/join')
 def join_group():
     try:
@@ -67,6 +68,7 @@ def join_group():
         return jsonify({'status': 'fail'})
     return jsonify({'status': 'success'})
 
+
 @api.post('/leave')
 def leave_group():
     try:
@@ -80,6 +82,7 @@ def leave_group():
         print(e)
         return jsonify({'status': 'fail'})
     return jsonify({'status': 'success'})
+
 
 def is_group_member(group, member):
     try:

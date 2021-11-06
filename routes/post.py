@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import request, jsonify
 from playhouse.shortcuts import model_to_dict
 
-from model import Post, PostLike
+from model import Post, PostLike, GroupMember
 from routes import api
 
 
@@ -18,11 +18,11 @@ def create_post():
             updated_at=datetime.now(),
             created_at=datetime.now()
         )
+        return jsonify({'status': 'success', 'id': model_to_dict(result)['id']})
     except Exception as e:
         print('error:', end=' ')
         print(e)
         return jsonify({'status': 'fail'})
-    return jsonify({'status': 'success'})
 
 
 @api.get('/getallpost')
@@ -32,7 +32,10 @@ def get_all_post():
         response = []
         for i in result:
             data = model_to_dict(i)
-            data['owner_id'] = data['owner_id']['id']
+            data['owner_id'] = {
+                'id': data['owner_id']['id'],
+                'username': data['owner_id']['username']
+            }
             data['group_id'] = data['group_id']['id']
             data['isLiked'] = is_like(data['id'], request.args.get('userId'))
             response.append(data)
@@ -48,7 +51,10 @@ def get_post_by_id():
     try:
         result = Post.get_by_id(request.args.get('id'))
         data = model_to_dict(result)
-        data['owner_id'] = data['owner_id']['id']
+        data['owner_id'] = {
+            'id': data['owner_id']['id'],
+            'username': data['owner_id']['username']
+        }
         data['group_id'] = data['group_id']['id']
         data['isLiked'] = is_like(data['id'], request.args.get('userId'))
         return jsonify(data)
@@ -65,7 +71,10 @@ def get_post_by_group():
         response = []
         for i in result:
             data = model_to_dict(i)
-            data['owner_id'] = data['owner_id']['id']
+            data['owner_id'] = {
+                'id': data['owner_id']['id'],
+                'username': data['owner_id']['username']
+            }
             data['group_id'] = data['group_id']['id']
             data['isLiked'] = is_like(data['id'], request.args.get('userId'))
             response.append(data)
@@ -146,3 +155,28 @@ def is_like(post, user):
         print('error:', end=' ')
         print(e)
         return None
+
+
+@api.get('/getpostbyuserid')
+def get_post_by_user():
+    try:
+        user_id = request.args.get('userId')
+        groups = GroupMember.select().where(GroupMember.member == user_id)
+        response = []
+        for group_id in groups:
+            print(group_id)
+            result = Post.select().where(Post.group_id == group_id)
+            for i in result:
+                data = model_to_dict(i)
+                data['owner_id'] = {
+                    'id': data['owner_id']['id'],
+                    'username': data['owner_id']['username']
+                }
+                data['group_id'] = data['group_id']['id']
+                data['isLiked'] = is_like(data['id'], user_id)
+                response.append(data)
+        return jsonify(response)
+    except Exception as e:
+        print('error:', end=' ')
+        print(e)
+        return jsonify({'status': 'fail'})

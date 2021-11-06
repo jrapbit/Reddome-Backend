@@ -18,11 +18,11 @@ def create_comment():
             created_at=datetime.now(),
             updated_at=datetime.now()
         )
+        return jsonify({'status': 'success', 'id': model_to_dict(result)['id']})
     except Exception as e:
         print('error:', end=' ')
         print(e)
         return jsonify({'status': 'fail'})
-    return jsonify({'status': 'success'})
 
 
 @api.get('/getcommentsbypost')
@@ -55,6 +55,7 @@ def get_comment_by_id():
         print(e)
         return jsonify({'status': 'fail'})
 
+
 @api.delete('/deletecommentbyid')
 def delete_comment():
     try:
@@ -66,6 +67,7 @@ def delete_comment():
         print(e)
         return jsonify({'status': 'fail'})
     return jsonify({'status': 'success'})
+
 
 @api.post('/editcomment')
 def edit_comment():
