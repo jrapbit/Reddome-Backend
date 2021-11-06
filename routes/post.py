@@ -28,7 +28,7 @@ def create_post():
 @api.get('/getallpost')
 def get_all_post():
     try:
-        result = Post.select()
+        result = Post.select().order_by(Post.updated_at.desc())
         response = []
         for i in result:
             data = model_to_dict(i)
@@ -77,7 +77,7 @@ def get_post_by_id():
 @api.get('/getpostbygroup')
 def get_post_by_group():
     try:
-        result = Post.select().where(Post.group_id == request.args.get('groupId'))
+        result = Post.select().order_by().where(Post.group_id == request.args.get('groupId').order_by(Post.updated_at.desc()))
         response = []
         for i in result:
             data = model_to_dict(i)
