@@ -41,6 +41,7 @@ def get_all_post():
                 'name': data['group_id']['name'],
                 'group_profile': data['group_id']['group_profile']
             }
+            data['likeCount'] = get_like(data['id'])
             data['isLiked'] = is_like(data['id'], request.args.get('userId'))
             response.append(data)
         return jsonify(response)
@@ -64,6 +65,7 @@ def get_post_by_id():
             'name': data['group_id']['name'],
             'group_profile': data['group_id']['group_profile']
         }
+        data['likeCount'] = get_like(data['id'])
         data['isLiked'] = is_like(data['id'], request.args.get('userId'))
         return jsonify(data)
     except Exception as e:
@@ -88,6 +90,7 @@ def get_post_by_group():
                 'name': data['group_id']['name'],
                 'group_profile': data['group_id']['group_profile']
             }
+            data['likeCount'] = get_like(data['id'])
             data['isLiked'] = is_like(data['id'], request.args.get('userId'))
             response.append(data)
         return jsonify(response)
@@ -169,6 +172,16 @@ def is_like(post, user):
         return None
 
 
+def get_like(post):
+    try:
+        like_count = PostLike.select().where(PostLike.post == post).count()
+        return like_count
+    except Exception as e:
+        print('error:', end=' ')
+        print(e)
+        return None
+
+
 @api.get('/getpostbyuserid')
 def get_post_by_user():
     try:
@@ -189,6 +202,7 @@ def get_post_by_user():
                     'name': data['group_id']['name'],
                     'group_profile': data['group_id']['group_profile']
                 }
+                data['likeCount'] = get_like(data['id'])
                 data['isLiked'] = is_like(data['id'], user_id)
                 response.append(data)
         return jsonify(response)
