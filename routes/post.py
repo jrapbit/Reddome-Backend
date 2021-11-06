@@ -36,7 +36,11 @@ def get_all_post():
                 'id': data['owner_id']['id'],
                 'username': data['owner_id']['username']
             }
-            data['group_id'] = data['group_id']['id']
+            data['group_id'] = {
+                'id': data['group_id']['id'],
+                'name': data['group_id']['name'],
+                'group_profile': data['group_id']['group_profile']
+            }
             data['isLiked'] = is_like(data['id'], request.args.get('userId'))
             response.append(data)
         return jsonify(response)
@@ -55,7 +59,11 @@ def get_post_by_id():
             'id': data['owner_id']['id'],
             'username': data['owner_id']['username']
         }
-        data['group_id'] = data['group_id']['id']
+        data['group_id'] = {
+            'id': data['group_id']['id'],
+            'name': data['group_id']['name'],
+            'group_profile': data['group_id']['group_profile']
+        }
         data['isLiked'] = is_like(data['id'], request.args.get('userId'))
         return jsonify(data)
     except Exception as e:
@@ -75,7 +83,11 @@ def get_post_by_group():
                 'id': data['owner_id']['id'],
                 'username': data['owner_id']['username']
             }
-            data['group_id'] = data['group_id']['id']
+            data['group_id'] = {
+                'id': data['group_id']['id'],
+                'name': data['group_id']['name'],
+                'group_profile': data['group_id']['group_profile']
+            }
             data['isLiked'] = is_like(data['id'], request.args.get('userId'))
             response.append(data)
         return jsonify(response)
@@ -172,7 +184,11 @@ def get_post_by_user():
                     'id': data['owner_id']['id'],
                     'username': data['owner_id']['username']
                 }
-                data['group_id'] = data['group_id']['id']
+                data['group_id'] = {
+                    'id': data['group_id']['id'],
+                    'name': data['group_id']['name'],
+                    'group_profile': data['group_id']['group_profile']
+                }
                 data['isLiked'] = is_like(data['id'], user_id)
                 response.append(data)
         return jsonify(response)
