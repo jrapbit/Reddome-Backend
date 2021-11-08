@@ -188,7 +188,8 @@ def get_post_by_user():
         user_id = request.args.get('userId')
         groups = GroupMember.select().where(GroupMember.member == user_id)
         response = []
-        for group_id in groups:
+        for group in groups:
+            group_id = model_to_dict(group)['group']['id']
             print(group_id)
             result = Post.select().where(Post.group_id == group_id)
             for i in result:

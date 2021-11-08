@@ -53,16 +53,16 @@ class Comment(Model):
 
 
 class GroupMember(Model):
-    group = ForeignKeyField(Group)
-    member = ForeignKeyField(User)
+    group = ForeignKeyField(Group, on_delete=True)
+    member = ForeignKeyField(User, on_delete=True)
 
     class Meta:
         database = db
 
 
 class PostLike(Model):
-    post = ForeignKeyField(Post)
-    user = ForeignKeyField(User)
+    post = ForeignKeyField(Post, on_delete=True)
+    user = ForeignKeyField(User, on_delete=True)
 
     class Meta:
         database = db
