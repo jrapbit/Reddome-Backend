@@ -31,6 +31,7 @@ def get_group_by_id():
         result = Group.get_by_id(request.args.get('groupId'))
         data = model_to_dict(result)
         data['isMember'] = is_group_member(request.args.get('groupId'), request.args.get('userId'))
+        data['memberCount'] = get_member(data['id'])
         return jsonify(data)
     except Exception as e:
         print('error:', end=' ')
@@ -46,12 +47,23 @@ def get_all_group():
         for i in result:
             data = model_to_dict(i)
             data['isMember'] = is_group_member(data['id'], request.args.get('userId'))
+            data['memberCount'] = get_member(data['id'])
             response.append(data)
         return jsonify(response)
     except Exception as e:
         print('error:', end=' ')
         print(e)
         return jsonify({'status': 'fail'})
+
+
+def get_member(group):
+    try:
+        member_count = GroupMember.select().where(GroupMember.group == group).count()
+        return member_count
+    except Exception as e:
+        print('error:', end=' ')
+        print(e)
+        return None
 
 
 @api.post('/join')
