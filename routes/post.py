@@ -100,7 +100,7 @@ def get_post_by_group():
         return jsonify({'status': 'fail'})
 
 
-@api.delete('/deletepostbyid')
+@api.post('/deletepostbyid')
 def delete_post():
     try:
         result = Post.delete_by_id(request.args.get('id'))

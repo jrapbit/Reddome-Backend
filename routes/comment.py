@@ -66,7 +66,7 @@ def get_comment_by_id():
         return jsonify({'status': 'fail'})
 
 
-@api.delete('/deletecommentbyid')
+@api.post('/deletecommentbyid')
 def delete_comment():
     try:
         result = Comment.delete_by_id(request.args.get('id'))
