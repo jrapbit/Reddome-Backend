@@ -33,7 +33,12 @@ def get_comment_by_post():
         for i in result:
             data = model_to_dict(i)
             data['post_id'] = data['post_id']['id']
-            data['owner_id'] = data['owner_id']['id']
+            data['owner_id'] = {
+                'id': data['owner_id']['id'],
+                'username': data['owner_id']['username'],
+                'profile_picture': data['owner_id']['profile_picture']
+
+            }
             response.append(data)
     except Exception as e:
         print('error:', end=' ')
@@ -48,7 +53,12 @@ def get_comment_by_id():
         result = Comment.get_by_id(request.args.get('id'))
         data = model_to_dict(result)
         data['post_id'] = data['post_id']['id']
-        data['owner_id'] = data['owner_id']['id']
+        data['owner_id'] = {
+            'id': data['owner_id']['id'],
+            'username': data['owner_id']['username'],
+            'profile_picture': data['owner_id']['profile_picture']
+
+        }
         return jsonify(data)
     except Exception as e:
         print('error:', end=' ')
